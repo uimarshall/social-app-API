@@ -16,3 +16,12 @@ const server = app.listen(port, () => {
     `Server is running on port ${port} in ${process.env.NODE_ENV} mode.`
   );
 });
+
+// Handle UnhandledPromiseRejection error
+process.on('unhandledRejection', err => {
+  console.log(`ERROR: ${err.message}`);
+  console.log('Shutting down the server due to UnhandledPromiseRejection');
+  server.close(() => {
+    process.exit(1);
+  });
+});
