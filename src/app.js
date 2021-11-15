@@ -1,6 +1,7 @@
 const express = require('express');
 
 const userAuthRoute = require('./api/routes/users');
+// TODO: Add swagger documentation
 
 // Initialize app
 const app = express();
