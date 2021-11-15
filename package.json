@@ -1,9 +1,13 @@
 {
-  "name": "social-app-API",
+  "name": "social_application_api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node src/server.js",
+    "dev": "SET NODE_ENV=DEVELOPMENT& nodemon src/server.js",
+    "prod": "SET NODE_ENV=PRODUCTION& nodemon src/server.js",
+    "server": "nodemon src/server.js",
     "test": "mocha",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
@@ -26,6 +30,14 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-prettier": "^4.0.0",
+    "nodemon": "^2.0.15",
     "prettier": "^2.4.1"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.12",
+    "morgan": "^1.10.0",
+    "winston": "^3.3.3"
   }
 }
