@@ -57,6 +57,13 @@ app.use((err, req, res, next) => {
   res.json({ error: err.message });
 });
 
+// Handle uncaught exceptions error
+process.on('uncaughtException', err => {
+  logger.error(`ERROR: ${err.stack}`);
+  logger.warn('Shutting down the server due to uncaughtException');
+  process.exit(1);
+});
+
 const port = process.env.PORT || 5000;
 
 const server = app.listen(port, () => {
@@ -69,8 +76,8 @@ const server = app.listen(port, () => {
 
 // Handle UnhandledPromiseRejection error
 process.on('unhandledRejection', err => {
-  console.log(`ERROR: ${err.message}`);
-  console.log('Shutting down the server due to UnhandledPromiseRejection');
+  logger.error(`ERROR: ${err.message}`);
+  logger.warn('Shutting down the server due to UnhandledPromiseRejection');
   server.close(() => {
     process.exit(1);
   });

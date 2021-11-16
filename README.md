@@ -1,5 +1,9 @@
 # social-app-API
 
+## Test API in postman
+
+1. Asynchronous error in controllers, if a particular field is omitted e.g. username
+
 You are required to build a social application that will allow users to:
 
 `1. create their profiles,`
