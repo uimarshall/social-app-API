@@ -16,9 +16,9 @@ const { Schema } = mongoose;
 const UserSchema = new Schema({
   username: {
     type: String,
-    required: [true, 'Please enter your name'],
+    required: [true, 'Please enter your username'],
     trim: true,
-    maxLength: [64, 'Your name must not exceed 64 characters'],
+    maxlength: [32, 'Your name must not exceed 32 characters'],
   },
   email: {
     type: String,
@@ -37,10 +37,7 @@ const UserSchema = new Schema({
     type: String,
     default: '',
   },
-  coverPicture: {
-    type: String,
-    default: '',
-  },
+
   followers: {
     type: Array,
     default: [],
@@ -49,10 +46,7 @@ const UserSchema = new Schema({
     type: Array,
     default: [],
   },
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
+
   createdAt: { type: Date, default: Date.now },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
