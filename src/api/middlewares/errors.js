@@ -38,6 +38,12 @@ module.exports = (err, req, res, next) => {
       error = new ErrorHandler(message, 400);
     }
 
+    // Handling Empty user database
+    if (error.message === "Cannot read property '_id' of null") {
+      const message = `No data available`;
+      error = new ErrorHandler(message, 400);
+    }
+
     // Handling Expired JWT Error
     if (err.name === 'TokenExpiredError') {
       const message = 'Web token is expired. Try Again!!!';

@@ -10,13 +10,15 @@ const {
   getUserDetails,
   updateProfile,
   getAllUsers,
+  deleteUser,
+  deleteAccount,
 } = require('../controllers/userAuthController');
 const { isAuthenticated } = require('../middlewares/auth');
 
 // Create/Register user
 router.post('/register', registerUser);
 
-// Get all users - only admin can do this
+// Get all users -
 router.get('/', isAuthenticated, getAllUsers);
 
 // Login user
@@ -33,5 +35,10 @@ router.get('/:id', isAuthenticated, getUserDetails);
 
 // Update user profile or details
 router.put('/me/update', isAuthenticated, updateProfile);
+
+// Delete user - only admin can do this
+router.delete('/delete/:id', isAuthenticated, deleteUser);
+// Delete user - only if it is your account
+router.delete('/delete/me/:id', isAuthenticated, deleteAccount);
 
 module.exports = router;

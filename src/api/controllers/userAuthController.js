@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable consistent-return */
 const HttpStatus = require('http-status-codes');
 
@@ -31,6 +31,7 @@ exports.registerUser = catchAsyncErrors(async (req, res) => {
 
 exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
   const usersFound = await User.find();
+
   res.status(StatusCodes.OK).json({
     count: usersFound.length,
     success: true,
@@ -133,4 +134,57 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
   });
 
   sendToken(userFound, 200, res);
+});
+
+// @desc: Delete user
+// @route: /api/v1/users/admin/:id
+// @access: protected
+
+exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
+  const userFound = await User.findById(req.params.id);
+  if (!userFound) {
+    return next(
+      new ErrorHandler(`User is not found with this id: ${req.params.id}`)
+    );
+  }
+
+  await userFound.remove();
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: 'User deleted successfully!',
+  });
+});
+
+// delete user
+// exports.delete('/:id', async (req, res) => {
+//   if (req.body.userId === req.params.id || req.body.isAdmin) {
+//     try {
+//       await User.findByIdAndDelete(req.params.id);
+//       res.status(200).json('Account has been deleted');
+//     } catch (err) {
+//       return res.status(500).json(err);
+//     }
+//   } else {
+//     return res.status(403).json('You can delete only your account!');
+//   }
+// });
+
+exports.deleteAccount = catchAsyncErrors(async (req, res, next) => {
+  const userFound = await User.findById(req.user.id);
+  if (!userFound) {
+    next(new ErrorHandler(`User is not found with this id: ${req.params.id}`));
+  }
+  console.log(userFound);
+  console.log(userFound._id);
+  if (req.user.id === req.params.id) {
+    // await User.findByIdAndDelete(req.params.id);
+    await userFound.remove();
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Account deleted successfully!',
+    });
+  } else {
+    return res.status(403).json('You can delete only your account!');
+  }
 });
