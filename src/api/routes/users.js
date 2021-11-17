@@ -3,18 +3,21 @@ const express = require('express');
 const router = express.Router();
 
 const {
-  getUsers,
   registerUser,
   loginUser,
   logoutUser,
   getUserProfile,
   getUserDetails,
   updateProfile,
+  getAllUsers,
 } = require('../controllers/userAuthController');
 const { isAuthenticated } = require('../middlewares/auth');
 
 // Create/Register user
 router.post('/register', registerUser);
+
+// Get all users - only admin can do this
+router.get('/', isAuthenticated, getAllUsers);
 
 // Login user
 router.post('/login', loginUser);
@@ -30,7 +33,5 @@ router.get('/:id', isAuthenticated, getUserDetails);
 
 // Update user profile or details
 router.put('/me/update', isAuthenticated, updateProfile);
-
-router.get('/', getUsers);
 
 module.exports = router;

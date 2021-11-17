@@ -25,13 +25,18 @@ exports.registerUser = catchAsyncErrors(async (req, res) => {
   sendToken(newUser, 200, res);
 });
 
-// Get Users test
-exports.getUsers = (req, res, next) => {
-  res.status(200).json({
+// @desc: Get all users-
+// @route: /api/v1/users
+// @access: protected
+
+exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
+  const usersFound = await User.find();
+  res.status(StatusCodes.OK).json({
+    count: usersFound.length,
     success: true,
-    message: 'Users routes so created!',
+    data: usersFound,
   });
-};
+});
 
 // @desc: Login a user
 // @route: /api/v1/users/login
