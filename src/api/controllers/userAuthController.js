@@ -76,3 +76,16 @@ exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
     message: 'Logged out successfully',
   });
 });
+
+// @desc: Get currently loggged in user details
+// @route: /api/v1/users/me
+// @access: protected
+
+exports.getUserProfile = catchAsyncErrors(async (req, res, next) => {
+  const userFound = await User.findById(req.user.id);
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    data: userFound,
+  });
+});

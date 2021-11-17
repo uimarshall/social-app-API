@@ -7,7 +7,9 @@ const {
   registerUser,
   loginUser,
   logoutUser,
+  getUserProfile,
 } = require('../controllers/userAuthController');
+const { isAuthenticated } = require('../middlewares/auth');
 
 // Create/Register user
 router.post('/register', registerUser);
@@ -17,6 +19,9 @@ router.post('/login', loginUser);
 
 // Logout user
 router.get('/logout', logoutUser);
+
+// Currently Login user-details or profile
+router.get('/me', isAuthenticated, getUserProfile);
 
 router.get('/', getUsers);
 
