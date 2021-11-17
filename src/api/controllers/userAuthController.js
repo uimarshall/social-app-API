@@ -107,3 +107,25 @@ exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
     data: userFound,
   });
 });
+
+// @desc: Update user profile/user-details
+// @route: /api/v1/users/me/update
+// @access: protected
+
+exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
+  const { username, email } = req.body;
+  const newUser = { username, email };
+
+  // Update avatar: TODO
+  const userFound = await User.findByIdAndUpdate(req.user.id, newUser, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+  });
+
+  sendToken(userFound, 200, res);
+});

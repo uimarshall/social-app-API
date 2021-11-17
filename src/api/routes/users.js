@@ -9,6 +9,7 @@ const {
   logoutUser,
   getUserProfile,
   getUserDetails,
+  updateProfile,
 } = require('../controllers/userAuthController');
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -26,6 +27,9 @@ router.get('/me', isAuthenticated, getUserProfile);
 
 // Get single user details -
 router.get('/:id', isAuthenticated, getUserDetails);
+
+// Update user profile or details
+router.put('/me/update', isAuthenticated, updateProfile);
 
 router.get('/', getUsers);
 

@@ -1,5 +1,6 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-console */
+/* eslint-disable no-underscore-dangle */
 const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
 const ErrorHandler = require('../../services/errorHandler');
@@ -19,5 +20,6 @@ exports.isAuthenticated = catchAsyncErrors(async (req, res, next) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   req.user = await User.findById(decoded.id);
   console.log(`req.user: ${req.user}`);
+  console.log(`req.user.id: ${req.user._id}`);
   next();
 });
