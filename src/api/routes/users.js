@@ -8,6 +8,7 @@ const {
   loginUser,
   logoutUser,
   getUserProfile,
+  getUserDetails,
 } = require('../controllers/userAuthController');
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -22,6 +23,9 @@ router.get('/logout', logoutUser);
 
 // Currently Login user-details or profile
 router.get('/me', isAuthenticated, getUserProfile);
+
+// Get single user details -
+router.get('/:id', isAuthenticated, getUserDetails);
 
 router.get('/', getUsers);
 

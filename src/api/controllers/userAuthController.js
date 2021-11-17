@@ -77,12 +77,30 @@ exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// @desc: Get currently loggged in user details
+// @desc: Get currently logged in user details
 // @route: /api/v1/users/me
 // @access: protected
 
 exports.getUserProfile = catchAsyncErrors(async (req, res, next) => {
   const userFound = await User.findById(req.user.id);
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    data: userFound,
+  });
+});
+
+// @desc: Get currently logged in user details
+// @route: /api/v1/users/:id
+// @access: protected
+
+exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
+  const userFound = await User.findById(req.params.id);
+  if (!userFound) {
+    return next(
+      new ErrorHandler(`User is not found with this id: ${req.params.id}`)
+    );
+  }
 
   res.status(StatusCodes.OK).json({
     success: true,
