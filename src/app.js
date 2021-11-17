@@ -1,4 +1,7 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+
 const errorMiddleware = require('./api/middlewares/errors');
 
 const userAuthRoute = require('./api/routes/users');
@@ -10,6 +13,8 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors()); // to handle request coming frm diff origins e.g.client will make req frm port 3000
 
 // Routes Middleware
 

@@ -13,7 +13,8 @@ const logger = require('./logger/logger');
 connectDb();
 
 // Winston logger
-const morganFormat = process.env.NODE_ENV !== 'production' ? 'dev' : 'combined';
+const morganFormat =
+  process.env.NODE_ENV !== 'PRODUCTION' ? 'DEVELOPMENT' : 'combined';
 
 app.use(
   morgan(morganFormat, {
