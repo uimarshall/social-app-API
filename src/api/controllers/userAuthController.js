@@ -57,17 +57,22 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   }
 
   sendToken(userFound, 200, res);
-  // let token = userFound.getJwtToken();
-  // token = `Bearer ${token}`;
-  // const { _id, username } = userFound;
+});
 
-  // return res.status(StatusCodes.OK).json({
-  //   message: 'SUCCESS',
-  //   token,
-  //   userFound: {
-  //     _id,
-  //     email,
-  //     username,
-  //   },
-  // });
+// @desc: Logout a user
+// @route: /api/v1/users/logout
+// @access: protected
+
+exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
+  // To logout is to clear the cookie stored during login/sign up,
+  // hence set token to 'null' and expires it immediately with Date.now()
+  res.cookie('token', null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  });
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: 'Logged out successfully',
+  });
 });
