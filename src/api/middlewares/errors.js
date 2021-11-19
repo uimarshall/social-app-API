@@ -39,7 +39,10 @@ module.exports = (err, req, res, next) => {
     }
 
     // Handling Empty user database
-    if (error.message === "Cannot read property '_id' of null") {
+    if (
+      error.message === "Cannot read property '_id' of null" ||
+      error.message === "Cannot read property 'id' of null"
+    ) {
       const message = `No data available`;
       error = new ErrorHandler(message, 400);
     }

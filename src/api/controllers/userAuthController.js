@@ -171,11 +171,9 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
 // });
 
 exports.deleteAccount = catchAsyncErrors(async (req, res, next) => {
-  const userFound = await User.findById(req.user.id);
-  if (!userFound) {
-    next(new ErrorHandler(`User is not found with this id: ${req.params.id}`));
-  }
-  console.log(userFound);
+  const userFound = await User.findById(req.params.id);
+
+  console.log('userFound', userFound);
   console.log(userFound._id);
   if (req.user.id === req.params.id) {
     // await User.findByIdAndDelete(req.params.id);
@@ -184,7 +182,12 @@ exports.deleteAccount = catchAsyncErrors(async (req, res, next) => {
       success: true,
       message: 'Account deleted successfully!',
     });
+  } else if (req.user.id !== req.params.id) {
+    // return res.status(403).json('You can delete only your account!');
+    return next(new ErrorHandler('You can delete only your account!', 403));
   } else {
-    return res.status(403).json('You can delete only your account!');
+    return next(
+      new ErrorHandler(`User is not found with this id: ${req.params.id}`)
+    );
   }
 });
