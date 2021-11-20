@@ -13,11 +13,14 @@ const bcrypt = require('bcryptjs');
 const validator = require('validator');
 
 const { Schema } = mongoose;
+const { ObjectId } = mongoose.Schema;
 const UserSchema = new Schema({
   username: {
     type: String,
     required: [true, 'Please enter your username'],
     trim: true,
+    lowercase: true,
+    minlength: [2, 'Your name must not be less than 2 characters'],
     maxlength: [32, 'Your name must not exceed 32 characters'],
   },
   email: {
@@ -35,22 +38,27 @@ const UserSchema = new Schema({
 
   profilePicture: {
     type: String,
-    default: '',
+    required: [true, 'profile image is required'],
+    default: '/static/images/profile.jpg',
   },
 
-  followers: {
-    type: Array,
-    default: [],
-  },
-  followings: {
-    type: Array,
-    default: [],
-  },
+  about: { type: String, trim: true },
 
+  followers: [{ type: ObjectId, ref: 'User' }],
+
+  followings: [{ type: ObjectId, ref: 'User' }],
   createdAt: { type: Date, default: Date.now },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 });
+
+const autoPopulateFollowingAndFollowers = function (next) {
+  this.populate('following', '_id username profilePicture,');
+  this.populate('followers', '_id username profilePicture,');
+  next();
+};
+
+UserSchema.pre('findOne', autoPopulateFollowingAndFollowers);
 
 // Encrypt password before saving user to database
 UserSchema.pre('save', async function (next) {

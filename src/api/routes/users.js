@@ -12,6 +12,7 @@ const {
   getAllUsers,
   deleteUser,
   deleteAccount,
+  userById,
 } = require('../controllers/userAuthController');
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -40,5 +41,11 @@ router.put('/me/update', isAuthenticated, updateProfile);
 router.delete('/delete/:id', isAuthenticated, deleteUser);
 // Delete user - only if it is your account
 router.delete('/delete/me/:id', isAuthenticated, deleteAccount);
+
+router.get('/secret/:id', isAuthenticated, (req, res) => {
+  res.json({ user: req.profile });
+});
+
+router.param('id', userById);
 
 module.exports = router;
