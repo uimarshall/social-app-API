@@ -2,6 +2,8 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable consistent-return */
 const { mongoose } = require('mongoose');
+const multer = require('multer');
+const Jimp = require('jimp');
 const HttpStatus = require('http-status-codes');
 
 const ErrorHandler = require('../../services/errorHandler');
@@ -243,5 +245,49 @@ exports.deleteFollower = catchAsyncErrors(async (req, res) => {
   res.status(StatusCodes.OK).json({
     success: true,
     data: userFound,
+  });
+});
+
+// Upload Images
+const imageUploadOptions = {
+  storage: multer.memoryStorage(),
+  // conditioning image size/file to 1mb
+  limits: { fileSize: 1024 * 1024 * 1 },
+  fileFilter: (req, file, next) => {
+    if (file.mimetype.startsWith('image/')) {
+      next(null, true);
+    } else {
+      next(null, false);
+    }
+  },
+};
+
+exports.uploadImage = multer(imageUploadOptions).single('profilePicture');
+
+exports.resizeImage = catchAsyncErrors(async (req, res, next) => {
+  if (!req.file) {
+    return next();
+  }
+  const extension = req.file.mimetype.split('/')[1];
+  req.body.profilePicture = `/static/uploads/profilePictures/${
+    req.user.username
+  }-${Date.now()}.${extension}`;
+  const image = await Jimp.read(req.file.buffer);
+  await image.resize(250, Jimp.AUTO);
+  await image.write(`./${req.body.profilePicture}`);
+  next();
+});
+
+exports.updateUser = catchAsyncErrors(async (req, res, next) => {
+  req.body.updatedAt = new Date().toISOString();
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $set: req.body },
+    { new: true, runValidators: true, useFindAndModify: false }
+  );
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    data: updatedUser,
   });
 });

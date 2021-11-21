@@ -14,43 +14,46 @@ const validator = require('validator');
 
 const { Schema } = mongoose;
 const { ObjectId } = mongoose.Schema;
-const UserSchema = new Schema({
-  username: {
-    type: String,
-    required: [true, 'Please enter your username'],
-    trim: true,
-    lowercase: true,
-    minlength: [2, 'Your name must not be less than 2 characters'],
-    maxlength: [32, 'Your name must not exceed 32 characters'],
-  },
-  email: {
-    type: String,
-    required: [true, 'Please enter your email'],
-    unique: true,
-    validate: [validator.isEmail, 'Please enter a valid email address'],
-  },
-  password: {
-    type: String,
-    required: [true, 'Please enter your password'],
-    minLength: [6, 'Your password must be at least 6 characters'],
-    select: false, // Don't display the password along the user info
-  },
+const UserSchema = new Schema(
+  {
+    username: {
+      type: String,
+      required: [true, 'Please enter your username'],
+      trim: true,
+      lowercase: true,
+      minlength: [2, 'Your name must not be less than 2 characters'],
+      maxlength: [32, 'Your name must not exceed 32 characters'],
+    },
+    email: {
+      type: String,
+      required: [true, 'Please enter your email'],
+      unique: true,
+      validate: [validator.isEmail, 'Please enter a valid email address'],
+    },
+    password: {
+      type: String,
+      required: [true, 'Please enter your password'],
+      minLength: [6, 'Your password must be at least 6 characters'],
+      select: false, // Don't display the password along the user info
+    },
 
-  profilePicture: {
-    type: String,
-    required: [true, 'profile image is required'],
-    default: '/static/images/profile.jpg',
+    profilePicture: {
+      type: String,
+      required: [true, 'profile image is required'],
+      default: '/static/images/profile.png',
+    },
+
+    about: { type: String, trim: true },
+    followings: [{ type: ObjectId, ref: 'User' }],
+
+    followers: [{ type: ObjectId, ref: 'User' }],
+
+    // createdAt: { type: Date, default: Date.now },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
-
-  about: { type: String, trim: true },
-  followings: [{ type: ObjectId, ref: 'User' }],
-
-  followers: [{ type: ObjectId, ref: 'User' }],
-
-  createdAt: { type: Date, default: Date.now },
-  resetPasswordToken: String,
-  resetPasswordExpire: Date,
-});
+  { timestamps: true }
+);
 
 const autoPopulateFollowingAndFollowers = function (next) {
   this.populate('followings', '_id username profilePicture,');

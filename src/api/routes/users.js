@@ -16,6 +16,9 @@ const {
   addFollower,
   deleteFollowing,
   deleteFollower,
+  uploadImage,
+  resizeImage,
+  updateUser,
 } = require('../controllers/userAuthController');
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -39,6 +42,9 @@ router.get('/:id', isAuthenticated, getUserDetails);
 
 // Update user profile or details
 router.put('/me/update', isAuthenticated, updateProfile);
+
+// Update user profile
+router.put('/:id', isAuthenticated, uploadImage, resizeImage, updateUser);
 
 // Delete user - only admin can do this
 router.delete('/delete/:id', isAuthenticated, deleteUser);
