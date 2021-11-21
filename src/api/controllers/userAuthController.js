@@ -194,6 +194,9 @@ exports.deleteAccount = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
+// @desc: Follow user
+// @route: /api/v1/users/follow
+// @access: protected
 exports.addFollowing = catchAsyncErrors(async (req, res, next) => {
   const { followId } = req.body;
   await User.findOneAndUpdate(
@@ -208,6 +211,32 @@ exports.addFollower = catchAsyncErrors(async (req, res, next) => {
   const userFound = await User.findOneAndUpdate(
     { _id: followId },
     { $push: { followers: req.user._id } },
+    { new: true }
+  );
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    data: userFound,
+  });
+});
+
+// @desc: Delete follower
+// @route: /api/v1/users/follow
+// @access: protected
+exports.deleteFollowing = catchAsyncErrors(async (req, res, next) => {
+  const { followId } = req.body;
+  await User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $pull: { followings: followId } }
+  );
+  next();
+});
+
+exports.deleteFollower = catchAsyncErrors(async (req, res) => {
+  const { followId } = req.body;
+  const userFound = await User.findOneAndUpdate(
+    { _id: followId },
+    { $pull: { followers: req.user._id } },
     { new: true }
   );
 

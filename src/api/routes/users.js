@@ -14,6 +14,8 @@ const {
   deleteAccount,
   addFollowing,
   addFollower,
+  deleteFollowing,
+  deleteFollower,
 } = require('../controllers/userAuthController');
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -44,8 +46,8 @@ router.delete('/delete/:id', isAuthenticated, deleteUser);
 router.delete('/delete/me/:id', isAuthenticated, deleteAccount);
 
 // Add Following
-
 router.put('/follow', isAuthenticated, addFollowing, addFollower);
+router.put('/unfollow', isAuthenticated, deleteFollowing, deleteFollower);
 
 router.get('/secret/:id', isAuthenticated, (req, res) => {
   res.json({ user: req.profile });
