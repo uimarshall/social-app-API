@@ -1,3 +1,4 @@
+/* eslint-disable  no-unused-vars */
 const express = require('express');
 
 const router = express.Router();
@@ -19,6 +20,7 @@ const {
   uploadImage,
   resizeImage,
   updateUser,
+  getUserById,
 } = require('../controllers/userAuthController');
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -36,6 +38,7 @@ router.get('/logout', logoutUser);
 
 // Currently Login user-details or profile
 router.get('/me', isAuthenticated, getUserProfile);
+// router.param('id', getUserById);
 
 // Get single user details -
 router.get('/:id', isAuthenticated, getUserDetails);
@@ -58,7 +61,5 @@ router.put('/unfollow', isAuthenticated, deleteFollowing, deleteFollower);
 router.get('/secret/:id', isAuthenticated, (req, res) => {
   res.json({ user: req.profile });
 });
-
-// router.param('id', userById);
 
 module.exports = router;
