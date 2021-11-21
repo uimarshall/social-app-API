@@ -142,14 +142,15 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
 // @access: protected
 
 exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
-  const userFound = await User.findById(req.params.id);
-  if (!userFound) {
+  // const userFound = await User.findById(req.params.id);
+  if (!req.isAuthUser) {
     return next(
-      new ErrorHandler(`User is not found with this id: ${req.params.id}`)
+      new ErrorHandler('You are not authorized to perform this action')
     );
   }
 
-  await userFound.remove();
+  // await userFound.remove();
+  await User.findOneAndDelete({ _id: req.params.id });
 
   res.status(StatusCodes.OK).json({
     success: true,
@@ -193,21 +194,25 @@ exports.deleteAccount = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-exports.userById = (req, res, next, id) => {
-  // The 'id' will come from the route params
-  User.findById(id).exec((err, userFound) => {
-    if (err || !userFound) {
-      return next(new ErrorHandler('User is not found', 400));
-    }
-    // If user found, then add d user info to d 'req' obj wt d key = 'profile' & value='userFound'
-    req.profile = userFound;
-    console.log('request.profile', req.profile);
-    const profileId = mongoose.Types.ObjectId.ObjectId(req.profile._id);
-    if (profileId === req.user._id) {
-      req.isAuthUser = true;
-      next();
-    }
-    // Call next middleware
-    next();
+exports.addFollowing = catchAsyncErrors(async (req, res, next) => {
+  const { followId } = req.body;
+  await User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $push: { followings: followId } }
+  );
+  next();
+});
+
+exports.addFollower = catchAsyncErrors(async (req, res, next) => {
+  const { followId } = req.body;
+  const userFound = await User.findOneAndUpdate(
+    { _id: followId },
+    { $push: { followers: req.user._id } },
+    { new: true }
+  );
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    data: userFound,
   });
-};
+});

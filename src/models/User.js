@@ -43,17 +43,17 @@ const UserSchema = new Schema({
   },
 
   about: { type: String, trim: true },
+  followings: [{ type: ObjectId, ref: 'User' }],
 
   followers: [{ type: ObjectId, ref: 'User' }],
 
-  followings: [{ type: ObjectId, ref: 'User' }],
   createdAt: { type: Date, default: Date.now },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 });
 
 const autoPopulateFollowingAndFollowers = function (next) {
-  this.populate('following', '_id username profilePicture,');
+  this.populate('followings', '_id username profilePicture,');
   this.populate('followers', '_id username profilePicture,');
   next();
 };
