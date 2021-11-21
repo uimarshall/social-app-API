@@ -70,3 +70,27 @@ exports.getPostsByUser = catchAsyncErrors(async (req, res) => {
     data: posts,
   });
 });
+
+exports.getPostById = catchAsyncErrors(async (req, res, next, id) => {
+  const post = await Post.findOne({ _id: id });
+  req.post = post;
+  const posterId = mongoose.Types.ObjectId(req.post.postedBy._id);
+
+  if (req.user && posterId.equals(req.user._id)) {
+    req.isPoster = true;
+    return next();
+  }
+  next();
+});
+
+// Delete Posts
+exports.deletePost = catchAsyncErrors(async (req, res, next) => {
+  if (!req.isPoster) {
+    return next(new ErrorHandler('You can delete only your post!', 403));
+  }
+  await Post.findOneAndDelete({ _id: req.post._id });
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: 'Posts deleted successfully!',
+  });
+});
