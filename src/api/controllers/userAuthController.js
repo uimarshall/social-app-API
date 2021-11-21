@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable consistent-return */
-const { mongoose } = require('mongoose');
+const mongoose = require('mongoose');
 const multer = require('multer');
 const Jimp = require('jimp');
 const HttpStatus = require('http-status-codes');
@@ -160,20 +160,6 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// delete user
-// exports.delete('/:id', async (req, res) => {
-//   if (req.body.userId === req.params.id || req.body.isAdmin) {
-//     try {
-//       await User.findByIdAndDelete(req.params.id);
-//       res.status(200).json('Account has been deleted');
-//     } catch (err) {
-//       return res.status(500).json(err);
-//     }
-//   } else {
-//     return res.status(403).json('You can delete only your account!');
-//   }
-// });
-
 exports.deleteAccount = catchAsyncErrors(async (req, res, next) => {
   const userFound = await User.findById(req.params.id);
 
@@ -291,3 +277,28 @@ exports.updateUser = catchAsyncErrors(async (req, res, next) => {
     data: updatedUser,
   });
 });
+
+exports.getUserById = catchAsyncErrors(async (req, res, next, id) => {
+  const user = await User.findOne(id);
+  req.profile = user;
+  const profileId = mongoose.Types.ObjectId(req.profile._id);
+
+  if (req.user && profileId.equals(req.user._id)) {
+    req.isAuthUser = true;
+    return next();
+  }
+  next();
+});
+
+exports.userById = (req, res, next, id) => {
+  User.findById(id).exec((err, userFound) => {
+    if (err || !userFound) {
+      return next(new ErrorHandler('This user is not found'));
+    }
+    // If user found, then add d user info to d 'req' obj wt d key = 'profile' & value='userFound'
+    req.profile = userFound; // i.e req = {profile:userFound}
+    console.log('request.profile', req.profile);
+    // Call next middleware
+    next();
+  });
+};

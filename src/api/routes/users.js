@@ -1,3 +1,4 @@
+/* eslint-disable  no-unused-vars */
 const express = require('express');
 
 const router = express.Router();
@@ -19,6 +20,8 @@ const {
   uploadImage,
   resizeImage,
   updateUser,
+  getUserById,
+  userById,
 } = require('../controllers/userAuthController');
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -55,10 +58,10 @@ router.delete('/delete/me/:id', isAuthenticated, deleteAccount);
 router.put('/follow', isAuthenticated, addFollowing, addFollower);
 router.put('/unfollow', isAuthenticated, deleteFollowing, deleteFollower);
 
-router.get('/secret/:id', isAuthenticated, (req, res) => {
+router.get('/secret/:userId', isAuthenticated, (req, res) => {
   res.json({ user: req.profile });
 });
 
-// router.param('id', userById);
+router.param('userId', getUserById);
 
 module.exports = router;
