@@ -59,3 +59,14 @@ exports.addPost = catchAsyncErrors(async (req, res) => {
     data: post,
   });
 });
+
+// Get a Users Posts
+exports.getPostsByUser = catchAsyncErrors(async (req, res) => {
+  const posts = await Post.find({ postedBy: req.profile._id }).sort({
+    createdAt: 'desc',
+  });
+  res.status(StatusCodes.OK).json({
+    count: posts.length,
+    data: posts,
+  });
+});

@@ -279,7 +279,7 @@ exports.updateUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.getUserById = catchAsyncErrors(async (req, res, next, id) => {
-  const user = await User.findOne({ _id: id });
+  const user = await User.findOne(id);
   req.profile = user;
   const profileId = mongoose.Types.ObjectId(req.profile._id);
 
@@ -289,3 +289,16 @@ exports.getUserById = catchAsyncErrors(async (req, res, next, id) => {
   }
   next();
 });
+
+exports.userById = (req, res, next, id) => {
+  User.findById(id).exec((err, userFound) => {
+    if (err || !userFound) {
+      return next(new ErrorHandler('This user is not found'));
+    }
+    // If user found, then add d user info to d 'req' obj wt d key = 'profile' & value='userFound'
+    req.profile = userFound; // i.e req = {profile:userFound}
+    console.log('request.profile', req.profile);
+    // Call next middleware
+    next();
+  });
+};
