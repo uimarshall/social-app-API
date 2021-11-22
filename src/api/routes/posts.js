@@ -6,6 +6,7 @@ const {
   resizePostsImage,
   getPostsByUser,
   deletePost,
+  getAllPosts,
 } = require('../controllers/postController');
 const { getUserById } = require('../controllers/userAuthController');
 const { isAuthenticated } = require('../middlewares/auth');
@@ -20,6 +21,10 @@ router.post(
   addPost,
   getUserById
 );
+
+// Get all posts
+
+router.get('/', getAllPosts);
 
 router.param('userId', getUserById);
 // Get post by User

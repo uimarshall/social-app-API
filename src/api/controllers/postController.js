@@ -11,6 +11,7 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const Post = require('../../models/Post');
 
 const sendToken = require('../../services/jwtToken');
+const APIFeatures = require('../../services/apiFeatures');
 
 const { ReasonPhrases, StatusCodes, getReasonPhrase, getStatusCode } =
   HttpStatus;
@@ -60,6 +61,7 @@ exports.addPost = catchAsyncErrors(async (req, res) => {
   });
 });
 
+// const apiFeatures = new APIFeatures();
 // Get a Users Posts
 exports.getPostsByUser = catchAsyncErrors(async (req, res) => {
   const posts = await Post.find({ postedBy: req.profile._id }).sort({
@@ -68,6 +70,32 @@ exports.getPostsByUser = catchAsyncErrors(async (req, res) => {
   res.status(StatusCodes.OK).json({
     count: posts.length,
     data: posts,
+  });
+});
+
+// @desc: Get All posts
+// @route: /api/v1/posts?keyword=educate
+// @access: public
+// Product.find() = query
+// req.query = queryStr
+
+exports.getAllPosts = catchAsyncErrors(async (req, res) => {
+  // Count total number of documents in the Db
+  const potsCount = await Post.countDocuments();
+  const apiFeatures = new APIFeatures(Post.find(), req.query).search();
+  await apiFeatures.query.exec((err, postsFound) => {
+    if (err) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: getReasonPhrase(StatusCodes.NOT_FOUND),
+        status: 'FAIL',
+      });
+    }
+    return res.status(StatusCodes.OK).json({
+      count: postsFound.length,
+      potsCount,
+      data: postsFound,
+      message: 'SUCCESS',
+    });
   });
 });
 
