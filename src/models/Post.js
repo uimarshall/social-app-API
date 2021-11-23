@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
@@ -18,8 +19,17 @@ const PostSchema = new Schema({
     type: String,
     required: [true, 'Post content is required'],
   },
+
+  username: { type: String, default: '', required: true },
   postedBy: { type: ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now() },
 });
+
+// const autoPopulateCreatedBy = function (next) {
+//   this.populate('createdBy', 'username');
+//   next();
+// };
+
+// PostSchema.pre('findOne', autoPopulateCreatedBy);
 
 module.exports = mongoose.model('Post', PostSchema);

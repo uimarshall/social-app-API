@@ -30,7 +30,7 @@ const productionFormat = format.combine(
 
 let logger;
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'PRODUCTION') {
   logger = createLogger({
     level,
     format: developmentFormat,

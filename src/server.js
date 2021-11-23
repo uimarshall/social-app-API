@@ -68,7 +68,7 @@ process.on('uncaughtException', err => {
 const port = process.env.PORT || 5000;
 
 const server = app.listen(port, () => {
-  console.log(
+  logger.info(
     `Server is running on port ${port} in ${process.env.NODE_ENV} mode.`
   );
   logger.info(`Social app listening on port ${port}`);
