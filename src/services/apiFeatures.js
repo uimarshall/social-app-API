@@ -11,7 +11,7 @@ class APIFeatures {
     const keyword = this.queryStr.keyword
       ? {
           // if a keyword exists, search it thru this regex.
-          name: {
+          title: {
             $regex: this.queryStr.keyword,
             $options: 'i',
           },

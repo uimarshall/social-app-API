@@ -11,6 +11,8 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const Post = require('../../models/Post');
 
 const sendToken = require('../../services/jwtToken');
+const APIFeatures = require('../../services/apiFeatures');
+const User = require('../../models/User');
 
 const { ReasonPhrases, StatusCodes, getReasonPhrase, getStatusCode } =
   HttpStatus;
@@ -49,17 +51,33 @@ exports.resizePostsImage = catchAsyncErrors(async (req, res, next) => {
 
 exports.addPost = catchAsyncErrors(async (req, res) => {
   req.body.postedBy = req.user._id;
+  req.body.username = req.user.username;
+  const { username } = req.body;
+  // const user = await User.findOne({ username });
+  console.log(username);
+
+  // if (!user) {
+  //   return res.status(400).json('Username not found');
+  // }
   const post = await new Post(req.body).save();
   await Post.populate(post, {
-    path: 'postedBy',
-    select: '_id username,profilePicture',
+    path: 'username',
+    select: 'username',
   });
+
+  await Post.populate(post, {
+    path: 'postedBy',
+    select: '_id username profilePicture',
+  });
+
+  // post.username = username;
   res.status(StatusCodes.CREATED).json({
     success: true,
     data: post,
   });
 });
 
+// const apiFeatures = new APIFeatures();
 // Get a Users Posts
 exports.getPostsByUser = catchAsyncErrors(async (req, res) => {
   const posts = await Post.find({ postedBy: req.profile._id }).sort({
@@ -68,6 +86,35 @@ exports.getPostsByUser = catchAsyncErrors(async (req, res) => {
   res.status(StatusCodes.OK).json({
     count: posts.length,
     data: posts,
+  });
+});
+
+// @desc: Get All posts
+// @route: /api/v1/posts?keyword=educate
+// @access: public
+// Product.find() = query
+// req.query = queryStr
+
+exports.getAllPosts = catchAsyncErrors(async (req, res) => {
+  // Count total number of documents in the Db
+  const postsCount = await Post.countDocuments();
+
+  const apiFeatures = new APIFeatures(Post.find(), req.query).search();
+
+  await apiFeatures.query.exec((err, postsFound) => {
+    if (err) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: getReasonPhrase(StatusCodes.NOT_FOUND),
+        status: 'FAIL',
+      });
+    }
+
+    return res.status(StatusCodes.OK).json({
+      count: postsFound.length,
+      postsCount,
+      data: postsFound,
+      message: 'SUCCESS',
+    });
   });
 });
 
