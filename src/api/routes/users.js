@@ -37,6 +37,10 @@ router.post('/login', loginUser);
 // Logout user
 router.get('/logout', logoutUser);
 
+// Add Following
+router.put('/follow', isAuthenticated, addFollowing, addFollower);
+router.put('/unfollow', isAuthenticated, deleteFollowing, deleteFollower);
+
 // Currently Login user-details or profile
 router.get('/me', isAuthenticated, getUserProfile);
 
@@ -53,10 +57,6 @@ router.put('/:id', isAuthenticated, uploadImage, resizeImage, updateUser);
 router.delete('/delete/:id', isAuthenticated, deleteUser);
 // Delete user - only if it is your account
 router.delete('/delete/me/:id', isAuthenticated, deleteAccount);
-
-// Add Following
-router.put('/follow', isAuthenticated, addFollowing, addFollower);
-router.put('/unfollow', isAuthenticated, deleteFollowing, deleteFollower);
 
 router.get('/secret/:userId', isAuthenticated, (req, res) => {
   res.json({ user: req.profile });
